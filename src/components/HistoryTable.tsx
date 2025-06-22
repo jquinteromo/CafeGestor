@@ -81,17 +81,17 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
         </tbody>
       </table>
 
-      <div className="w-full flex flex-row gap-4">
+      <div className="w-full flex flex-row gap-4 mt-6">
         <input
           name="kilos"
           type="search"
           className={`${
             recordWorker.length >= 8 ? "visible" : "hidden"
-          } flex-1 w-full mt-4 p-2 border border-gray-400/90 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300 placeholder:text-gray-600 text-sm`}
+          } flex-1 w-full p-2 border border-gray-400/90 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300 placeholder:text-gray-600 text-sm`}
           placeholder="Buscar Trabajador"
         />
         <button
-        className="flex-1"
+        className={`${recordWorker.length >=8 ? 'visible':'hidden'} flex-1 bg-green-700 rounded-lg text-sm text-white`}
         >
           Ver  más trabajdores
         </button>
