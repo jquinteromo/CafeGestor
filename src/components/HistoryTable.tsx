@@ -19,7 +19,6 @@ type HijosProp = {
 
 export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
   const availableDates = Array.from(new Set(recordWorker.map((r) => r.date)));
- 
 
   const [selectedDate, setSelectedDate] = useState(availableDates[0]);
   const [viewMode, setViewMode] = useState<"daily" | "summary">("daily");
@@ -47,9 +46,9 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
 
   const filtered = recordWorker.filter((r) => r.date === selectedDate);
 
-  const selectedDayName = new Date(selectedDate).toLocaleDateString("es-ES", {
+  const selectedDayName = new Date(selectedDate+"T00:00:00-05:00").toLocaleDateString("es-ES", {
     weekday: "long",
-    day: "numeric",
+    day: "numeric", 
     month: "long",
     year: "numeric",
   });
@@ -61,6 +60,10 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
       setViewMode("daily");
     }
   }, [recordWorker]);
+
+  useEffect(() => {
+    console.log(selectedDayName);
+  }, [selectedDayName]);
 
   return (
     <div
@@ -74,7 +77,7 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
 
       <div className="grid grid-cols-4 gap-2  mb-8 mt-8">
         {availableDates.map((date) => {
-          const dayName = new Date(date).toLocaleDateString("es-ES", {
+          const dayName = new Date(date+"T00:00:00-05:00").toLocaleDateString("es-ES", {
             weekday: "long",
           });
           return (
@@ -100,7 +103,6 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
         >
           Total
         </button>
-
       </div>
 
       <p className={`text-sm text-gray-500 mb-2`}>

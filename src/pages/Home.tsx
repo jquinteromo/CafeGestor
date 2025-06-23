@@ -17,6 +17,31 @@ export default function Home() {
   const [kilosPrecio, setKilosPrecio] = useState<string>("");
   const [recordWorker, setrecordWorker] = useState<workerType[]>([]);
 
+  // const formatDate = (date: Date) => date.toISOString().split("T")[0];
+
+  // const today = new Date();
+  // const yesterday = new Date(today);
+  // yesterday.setDate(today.getDate() - 1);
+
+  // // const mockWorkers = [
+  // //   {
+  // //     worker: "Pedro",
+  // //     kilos: "25",
+  // //     date: formatDate(today), // hoy
+  // //   },
+  // //   {
+  // //     worker: "Juan",
+  // //     kilos: "30",
+  // //     date: formatDate(yesterday), // ayer
+  // //   },
+  // //   {
+  // //     worker: "Pedro",
+  // //     kilos: "15",
+  // //     date: formatDate(yesterday), // ayer
+  // //   },
+  // ];
+
+
   const PricePerKilo = (value: string) => {
     setKilosPrecio(value);
   };
@@ -27,7 +52,6 @@ export default function Home() {
 
   return (
     <main className=" bg-green-50 p-4  ">
-
       <h1 className="text-4xl font-bold mb-10 text-green-800 flex justify-center items-center">
         CaféGestor <HandCoins size={34} className="ml-4"></HandCoins>
       </h1>
@@ -46,7 +70,7 @@ export default function Home() {
           <CalendarSection />
         </section>
         <section className="  rounded-2xl shadow bg-white">
-          <HistoryTable recordWorker={recordWorker} kilosPrecio={kilosPrecio}/>
+          <HistoryTable recordWorker={recordWorker} kilosPrecio={kilosPrecio} />
         </section>
       </div>
     </main>
