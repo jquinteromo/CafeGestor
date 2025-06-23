@@ -19,6 +19,8 @@ type HijosProp = {
 
 export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
   const availableDates = Array.from(new Set(recordWorker.map((r) => r.date)));
+ 
+
   const [selectedDate, setSelectedDate] = useState(availableDates[0]);
   const [viewMode, setViewMode] = useState<"daily" | "summary">("daily");
   const [summary, setsummary] = useState<workerTotalType[]>([]);
@@ -59,18 +61,18 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
       setViewMode("daily");
     }
   }, [recordWorker]);
-  
+
   return (
     <div
       className={`${
         recordWorker.length > 0 ? "visible" : "hidden"
-      } bg-white p-4 shadow rounded-xl mb-10 `}
+      } bg-white p-4 shadow rounded-xl mb-8 `}
     >
       <h2 className="text-xl font-bold text-green-700 mb-4">
         Historial por Día y Trabajador
       </h2>
 
-      <div className="flex flex-wrap gap-2 mb-4">
+      <div className="grid grid-cols-4 gap-2  mb-8 mt-8">
         {availableDates.map((date) => {
           const dayName = new Date(date).toLocaleDateString("es-ES", {
             weekday: "long",
@@ -98,6 +100,7 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
         >
           Total
         </button>
+
       </div>
 
       <p className={`text-sm text-gray-500 mb-2`}>
