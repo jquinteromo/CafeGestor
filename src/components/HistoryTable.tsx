@@ -6,6 +6,12 @@ type workerType = {
   date: string;
 };
 
+type workerTotalType = {
+  worker: string;
+  totalKilos: number;
+  totalDinero: number;
+};
+
 type HijosProp = {
   recordWorker: workerType[];
   kilosPrecio: string;
@@ -14,6 +20,29 @@ type HijosProp = {
 export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
   const availableDates = Array.from(new Set(recordWorker.map((r) => r.date)));
   const [selectedDate, setSelectedDate] = useState(availableDates[0]);
+  const [viewMode, setViewMode] = useState<"daily" | "summary">("daily");
+  const [summary, setsummary] = useState<workerTotalType[]>([]);
+
+  const handleTotalClick = () => {
+    const resumen = recordWorker.reduce((acc, r) => {
+      const { worker, kilos } = r;
+      const kilosInt = parseInt(kilos);
+      if (!acc[worker]) {
+        acc[worker] = {
+          worker,
+          totalKilos: 0,
+          totalDinero: 0,
+        };
+      }
+      acc[worker].totalKilos += kilosInt;
+      acc[worker].totalDinero += kilosInt * parseInt(kilosPrecio);
+      return acc;
+    }, {} as Record<string, { worker: string; totalKilos: number; totalDinero: number }>);
+
+    setsummary(Object.values(resumen));
+    setViewMode("summary");
+  };
+
   const filtered = recordWorker.filter((r) => r.date === selectedDate);
 
   const selectedDayName = new Date(selectedDate).toLocaleDateString("es-ES", {
@@ -23,9 +52,10 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
     year: "numeric",
   });
 
+
   useEffect(() => {
     console.log(recordWorker);
-  }, []);
+  }, [recordWorker]);
   return (
     <div
       className={`${
@@ -44,7 +74,10 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
           return (
             <button
               key={date}
-              onClick={() => setSelectedDate(date)}
+              onClick={() => {
+                setSelectedDate(date)
+              setViewMode("daily")
+              }}
               className={`px-3 py-1 rounded-full text-sm font-semibold transition ${
                 selectedDate === date
                   ? "bg-green-600 text-white"
@@ -55,9 +88,15 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
             </button>
           );
         })}
+        <button
+          onClick={() => handleTotalClick() }
+          className="px-3 py-1 rounded-full text-sm font-semibold transition text-white bg-black"
+        >
+          Total
+        </button>
       </div>
 
-      <p className="text-sm text-gray-500 mb-2">Cogida Hoy {selectedDayName}</p>
+      <p className={`text-sm text-gray-500 mb-2`}>{viewMode === 'daily'? "Cogida Hoy  "+ selectedDayName: "Total de la semana"} </p>
 
       <table className="w-full text-sm border table-auto">
         <thead className="bg-green-100 text-green-800">
@@ -68,16 +107,28 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
           </tr>
         </thead>
         <tbody>
-          {filtered.map((rec, index) => (
-            <tr key={index} className="text-gray-700">
-              <td className="p-2 border">{rec.worker}</td>
-              <td className="p-2 border">{rec.kilos}</td>
-              <td className="p-2 border font-semibold text-green-800">
-                $
-                {(parseInt(kilosPrecio) * parseInt(rec.kilos)).toLocaleString()}
-              </td>
-            </tr>
-          ))}
+          {viewMode === "daily"
+            ? filtered.map((rec, index) => (
+                <tr key={index}>
+                   <td className="p-2 border border-gray-300 text-gray-700" >{rec.worker}</td>
+                   <td className="p-2 border border-gray-300 text-gray-700" >{rec.kilos}</td>
+                   <td className="p-2 border border-gray-300 text-gray-700" >
+                    $
+                    {(
+                      parseInt(kilosPrecio) * parseInt(rec.kilos)
+                    ).toLocaleString()}
+                  </td>
+                </tr>
+              ))
+            : summary.map((rec, index) => (
+                <tr key={index}>
+                  <td className="p-2 border border-gray-300 text-gray-700" >{rec.worker}</td>
+                     <td className="p-2 border border-gray-300 text-gray-700" >{rec.totalKilos}</td>
+                     <td className="p-2 border border-gray-300 text-gray-700" >
+                    ${(parseInt(kilosPrecio) * rec.totalKilos).toLocaleString()}
+                  </td>
+                </tr>
+              ))}
         </tbody>
       </table>
 
@@ -91,9 +142,11 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
           placeholder="Buscar Trabajador"
         />
         <button
-        className={`${recordWorker.length >=8 ? 'visible':'hidden'} flex-1 bg-green-700 rounded-lg text-sm text-white`}
+          className={`${
+            recordWorker.length >= 8 ? "visible" : "hidden"
+          } flex-1 bg-green-700 rounded-lg text-sm text-white`}
         >
-          Ver  más trabajdores
+          Ver más trabajdores
         </button>
       </div>
     </div>
