@@ -10,21 +10,21 @@ export default function PrecieKg({ PricePerKilo }: HijosProp) {
 
   return (
     <div className="flex flex-col mt-6 ">
-      <label className="text-start text-base font-semibold text-gray-700 mb-2">
-        Precio de Kilo
+      <label className={`text-start text-base font-semibold text-gray-700  ml-2 ${!showpricePerKilo ? 'mb-0':'mb-2'}`}>
+        Precio de Kilo <span className={`${!showpricePerKilo ? 'hidden':'visible'}`}>(Obligatorio)</span> 
       </label>
 
       <div
         className={`${
-          showpricePerKilo === true ? "hidden" : "visible"
-        } w-full flex flex-row items-center gap-2`}
+            showpricePerKilo ? "hidden" : "flex"
+        } w-full justify-between bg-gray-100 p-3 rounded-lg shadow-sm`}
       >
-        <p className="text-start text-gray-800 mb-2">
+        <p className="text-lg font-semibold text-gray-800 ">
           ${parseInt(pricePerKilo).toLocaleString("es-CO")}
         </p>
         <button
           onClick={() => setshowpricePerKilo(true)}
-          className="text-sm rounded-sm text-white p-1 bg-green-700 mb-2"
+          className="p-2 bg-green-700 text-white rounded-r-lg"
         >
           Editar
         </button>
