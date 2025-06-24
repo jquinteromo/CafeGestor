@@ -2,21 +2,40 @@ import { useState } from "react";
 
 type HijosProp = {
   PricePerKilo: (value: string) => void;
+  setshowpricePerKilo: (value: boolean) => void;
+  showpricePerKilo: boolean;
+  setsavePrecie: (value: boolean) => void;
+  savePrecie: boolean;
+  errorPreciekg: string;
 };
 
-export default function PrecieKg({ PricePerKilo }: HijosProp) {
+export default function PrecieKg({
+  PricePerKilo,
+  setshowpricePerKilo,
+  showpricePerKilo,
+  setsavePrecie,
+  savePrecie,
+  errorPreciekg,
+}: HijosProp) {
   const [pricePerKilo, setPricePerKilo] = useState<string>("");
-  const [showpricePerKilo, setshowpricePerKilo] = useState<boolean>(true);
+  
 
   return (
     <div className="flex flex-col mt-6 ">
-      <label className={`text-start text-base font-semibold text-gray-700  ml-2 ${!showpricePerKilo ? 'mb-0':'mb-2'}`}>
-        Precio de Kilo <span className={`${!showpricePerKilo ? 'hidden':'visible'}`}>(Obligatorio)</span> 
+      <label
+        className={`text-start text-base font-semibold text-gray-700  ml-2 ${
+          !showpricePerKilo ? "mb-0" : "mb-2"
+        }`}
+      >
+        Precio de Kilo{""}
+        <span className={`${showpricePerKilo ? "visble" : "hidden"}`}>
+          (Obligatorio)
+        </span>
       </label>
 
       <div
         className={`${
-            showpricePerKilo ? "hidden" : "flex"
+          showpricePerKilo ? "hidden" : "flex"
         } w-full justify-between bg-gray-100 p-3 rounded-lg shadow-sm`}
       >
         <p className="text-lg font-semibold text-gray-800 ">
@@ -47,13 +66,31 @@ export default function PrecieKg({ PricePerKilo }: HijosProp) {
             }}
           />
           <input
-            onClick={() => setshowpricePerKilo(false)}
+            onClick={() => {
+              if (!pricePerKilo) {
+                return;
+              }
+              setshowpricePerKilo(false);
+              setsavePrecie(true);
+            }}
             type="button"
             value={"Guardar"}
             className=" p-2 bg-green-700 text-white rounded-r-lg"
           />
         </div>
       )}
+  
+
+      {savePrecie ||
+        (errorPreciekg && (
+          <span
+            className={`${
+              savePrecie && !pricePerKilo ? "hidden" : "visible"
+            }   text-red-400 text-start mt-2`}
+          >
+            Guarda e ingresa un precio valido
+          </span>
+        ))}
     </div>
   );
 }

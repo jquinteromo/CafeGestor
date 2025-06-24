@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 type workerType = {
   worker: string;
@@ -12,11 +12,45 @@ const workerInit: workerType = {
   date: "",
 };
 
+
+type Errors = {
+  precieKg: string;
+  worker: string;
+  kilos: string;
+};
+
+const errorsInit: Errors = {
+  precieKg: "",
+  worker: "",
+  kilos: "",
+};
+
+
 type HijosProp = {
   dataWorker: (value: workerType) => void;
+  recordWorker: workerType[];
+  kilosPrecio: string;
+  showpricePerKilo: boolean;
+  savePrecie: boolean;
+  setErrors: (value:Errors) => void;
+  errors : Errors
 };
-export const HarvestForm = ({ dataWorker }: HijosProp) => {
+
+export const HarvestForm = ({
+  dataWorker,
+  recordWorker,
+  kilosPrecio,
+  savePrecie,
+  setErrors,
+  errors 
+}: HijosProp) => {
   const [worker, setworker] = useState<workerType>(workerInit);
+
+  const alreadyExists = recordWorker.some(
+    (r) =>
+      r.worker.toLowerCase().trim() === worker.worker.toLowerCase().trim() &&
+      r.date === new Date().toISOString().split("T")[0]
+  );
 
   const Recordsworkers = (name: string, value: string) => {
     setworker({
@@ -46,6 +80,20 @@ export const HarvestForm = ({ dataWorker }: HijosProp) => {
             className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300"
             onChange={(e) => Recordsworkers(e.target.name, e.target.value)}
           />
+          {alreadyExists && (
+            <span
+              className={`${
+                alreadyExists ? "visible" : "hidden"
+              }  text-red-400 text-start mt-2`}
+            >
+              Ya se registro el trabjador hoy
+            </span>
+          )}
+          {errors.worker && (
+            <span className={` text-red-400 text-start mt-2`}>
+              {errors.worker}
+            </span>
+          )}
         </div>
         <div className="flex flex-col">
           <label className="text-start text-base font-semibold text-gray-700 mb-2">
@@ -58,11 +106,45 @@ export const HarvestForm = ({ dataWorker }: HijosProp) => {
             className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300"
             onChange={(e) => Recordsworkers(e.target.name, e.target.value)}
           />
+          {errors.kilos && (
+            <span className={` text-red-400 text-start mt-2`}>
+              {errors.kilos}
+            </span>
+          )}
         </div>
       </div>
 
       <button
         onClick={() => {
+          const newErrors = { precieKg: "", worker: "", kilos: "" };
+          let hasError = false;
+
+          if ((kilosPrecio && !savePrecie) || !kilosPrecio) {
+            newErrors.precieKg = "Ingresa precio kg a pagar";
+            hasError = true;
+          }
+
+          if (!worker.worker.trim()) {
+            newErrors.worker = "Por favor ingresa el nombre del trabajador";
+            hasError = true;
+          }
+
+          if (!worker.kilos.trim()) {
+            newErrors.kilos = "Por favor ingresa los kilos recogidos";
+            hasError = true;
+          }
+
+          if (hasError) {
+            setErrors(newErrors);
+            return;
+          }
+
+          
+
+          if (alreadyExists) {
+            return;
+          }
+
           const fullWorker = {
             ...worker,
             date: new Date().toISOString().split("T")[0],
@@ -70,6 +152,7 @@ export const HarvestForm = ({ dataWorker }: HijosProp) => {
 
           dataWorker(fullWorker);
           setworker(workerInit);
+          setErrors(errorsInit);
         }}
         className="p-2 bg-green-700 rounded-lg mt-2 text-white"
       >

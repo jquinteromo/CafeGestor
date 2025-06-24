@@ -13,9 +13,28 @@ type workerType = {
   date: string;
 };
 
+type Errors = {
+  precieKg: string;
+  worker: string;
+  kilos: string;
+};
+
 export default function Home() {
   const [kilosPrecio, setKilosPrecio] = useState<string>("");
   const [recordWorker, setrecordWorker] = useState<workerType[]>([]);
+  
+  
+  const [showpricePerKilo, setshowpricePerKilo] = useState<boolean>(true);
+
+  //SE GAURDO EL PRECIO DE KG
+  const [savePrecie, setsavePrecie] = useState<boolean>(false);
+
+   const [errors, setErrors] = useState<Errors>({
+    precieKg:"",
+    worker: "",
+    kilos: "",
+  });
+
 
   // const formatDate = (date: Date) => date.toISOString().split("T")[0];
 
@@ -41,7 +60,6 @@ export default function Home() {
   // //   },
   // ];
 
-
   const PricePerKilo = (value: string) => {
     setKilosPrecio(value);
   };
@@ -59,11 +77,26 @@ export default function Home() {
       <PriceDisplay />
       <AddNewHarvestButton></AddNewHarvestButton>
       <div className="grid gap-6 lg:grid-cols-1">
-        <PrecieKg PricePerKilo={PricePerKilo}></PrecieKg>
+        <PrecieKg
+          PricePerKilo={PricePerKilo}
+    
+          setshowpricePerKilo={setshowpricePerKilo}
+          showpricePerKilo={showpricePerKilo}
+          setsavePrecie={setsavePrecie}
+          savePrecie={savePrecie}
+          errorPreciekg={errors.precieKg}
+        ></PrecieKg>
+
         <section className=" rounded-2xl shadow bg-white">
           <HarvestForm
             dataWorker={dataWorker}
-            // kilosPrecio={kilosPrecio}
+            recordWorker={recordWorker}
+            kilosPrecio={kilosPrecio}
+           
+            showpricePerKilo={showpricePerKilo}
+            savePrecie={savePrecie}
+            setErrors = {setErrors}
+            errors ={errors}
           />
         </section>
         <section className=" rounded-2xl shadow bg-white hidden">

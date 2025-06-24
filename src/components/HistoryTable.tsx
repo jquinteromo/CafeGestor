@@ -46,9 +46,11 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
 
   const filtered = recordWorker.filter((r) => r.date === selectedDate);
 
-  const selectedDayName = new Date(selectedDate+"T00:00:00-05:00").toLocaleDateString("es-ES", {
+  const selectedDayName = new Date(
+    selectedDate + "T00:00:00-05:00"
+  ).toLocaleDateString("es-ES", {
     weekday: "long",
-    day: "numeric", 
+    day: "numeric",
     month: "long",
     year: "numeric",
   });
@@ -77,9 +79,12 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
 
       <div className="grid grid-cols-4 gap-2  mb-8 mt-8">
         {availableDates.map((date) => {
-          const dayName = new Date(date+"T00:00:00-05:00").toLocaleDateString("es-ES", {
-            weekday: "long",
-          });
+          const dayName = new Date(date + "T00:00:00-05:00").toLocaleDateString(
+            "es-ES",
+            {
+              weekday: "long",
+            }
+          );
           return (
             <button
               key={date}
