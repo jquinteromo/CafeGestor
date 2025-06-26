@@ -12,7 +12,6 @@ const workerInit: workerType = {
   date: "",
 };
 
-
 type Errors = {
   precieKg: string;
   worker: string;
@@ -25,15 +24,14 @@ const errorsInit: Errors = {
   kilos: "",
 };
 
-
 type HijosProp = {
   dataWorker: (value: workerType) => void;
   recordWorker: workerType[];
   kilosPrecio: string;
   showpricePerKilo: boolean;
   savePrecie: boolean;
-  setErrors: (value:Errors) => void;
-  errors : Errors
+  setErrors: (value: Errors) => void;
+  errors: Errors;
 };
 
 export const HarvestForm = ({
@@ -42,7 +40,7 @@ export const HarvestForm = ({
   kilosPrecio,
   savePrecie,
   setErrors,
-  errors 
+  errors,
 }: HijosProp) => {
   const [worker, setworker] = useState<workerType>(workerInit);
 
@@ -104,7 +102,10 @@ export const HarvestForm = ({
             name="kilos"
             type="text"
             className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300"
-            onChange={(e) => Recordsworkers(e.target.name, e.target.value)}
+            onChange={(e) => {
+              const justNumbers = e.target.value.replace(/\D/g, "");
+              Recordsworkers(e.target.name, justNumbers);
+            }}
           />
           {errors.kilos && (
             <span className={` text-red-400 text-start mt-2`}>
@@ -138,8 +139,6 @@ export const HarvestForm = ({
             setErrors(newErrors);
             return;
           }
-
-          
 
           if (alreadyExists) {
             return;

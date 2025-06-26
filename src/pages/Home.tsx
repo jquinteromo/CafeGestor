@@ -36,29 +36,47 @@ export default function Home() {
   });
 
 
-  // const formatDate = (date: Date) => date.toISOString().split("T")[0];
 
-  // const today = new Date();
-  // const yesterday = new Date(today);
-  // yesterday.setDate(today.getDate() - 1);
+// function formatDate(date) {
+//   return date.toISOString().split("T")[0];
+// }
 
-  // // const mockWorkers = [
-  // //   {
-  // //     worker: "Pedro",
-  // //     kilos: "25",
-  // //     date: formatDate(today), // hoy
-  // //   },
-  // //   {
-  // //     worker: "Juan",
-  // //     kilos: "30",
-  // //     date: formatDate(yesterday), // ayer
-  // //   },
-  // //   {
-  // //     worker: "Pedro",
-  // //     kilos: "15",
-  // //     date: formatDate(yesterday), // ayer
-  // //   },
-  // ];
+//  const today = new Date();
+// const monday = new Date(today);
+// monday.setDate(today.getDate() - today.getDay() + 1); // lunes
+// const tuesday = new Date(monday);
+// tuesday.setDate(monday.getDate() + 1);
+// const wednesday = new Date(monday);
+// wednesday.setDate(monday.getDate() + 2);
+// const thursday = new Date(monday);
+// thursday.setDate(monday.getDate() + 3);
+// const friday = new Date(monday);
+// friday.setDate(monday.getDate() + 4);
+// const saturday = new Date(monday);
+// saturday.setDate(monday.getDate() + 5);
+
+// const mockWorkers = [
+//   { worker: "Pedro", kilos: "22", date: formatDate(monday) },
+//   { worker: "Lucía", kilos: "18", date: formatDate(monday) },
+
+//   { worker: "Juan", kilos: "25", date: formatDate(tuesday) },
+//   { worker: "Ana", kilos: "30", date: formatDate(tuesday) },
+
+//   { worker: "Carlos", kilos: "27", date: formatDate(wednesday) },
+//   { worker: "Lucía", kilos: "21", date: formatDate(wednesday) },
+
+//   { worker: "Sofía", kilos: "35", date: formatDate(thursday) },
+//   { worker: "Pedro", kilos: "20", date: formatDate(thursday) },
+
+//   { worker: "Ana", kilos: "32", date: formatDate(friday) },
+//   { worker: "Carlos", kilos: "28", date: formatDate(friday) },
+
+//   { worker: "Sofía", kilos: "29", date: formatDate(saturday) },
+//   { worker: "Juan", kilos: "33", date: formatDate(saturday) },
+// ];
+
+
+
 
   const PricePerKilo = (value: string) => {
     setKilosPrecio(value);
@@ -103,7 +121,7 @@ export default function Home() {
           <CalendarSection />
         </section>
         <section className="  rounded-2xl shadow bg-white">
-          <HistoryTable recordWorker={recordWorker} kilosPrecio={kilosPrecio} />
+          <HistoryTable recordWorker={recordWorker  } kilosPrecio={kilosPrecio} />
         </section>
       </div>
     </main>

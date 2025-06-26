@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { SquarePen } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 
 type workerType = {
   worker: string;
@@ -23,6 +24,7 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
   const [selectedDate, setSelectedDate] = useState(availableDates[0]);
   const [viewMode, setViewMode] = useState<"daily" | "summary">("daily");
   const [summary, setsummary] = useState<workerTotalType[]>([]);
+  const [editTable, seteditTable] = useState<boolean>(false);
 
   const handleTotalClick = () => {
     const resumen = recordWorker.reduce((acc, r) => {
@@ -63,9 +65,10 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
     }
   }, [recordWorker]);
 
+  const tdRef = useRef<HTMLTableCellElement>(null);
   useEffect(() => {
-    console.log(selectedDayName);
-  }, [selectedDayName]);
+    tdRef.current?.focus();
+  }, [editTable,viewMode]);
 
   return (
     <div
@@ -73,11 +76,26 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
         recordWorker.length > 0 ? "visible" : "hidden"
       } bg-white p-4 shadow rounded-xl mb-8 `}
     >
-      <h2 className="text-xl font-bold text-green-700 mb-4">
+      <h2 className="text-xl font-bold text-center text-green-700">
         Historial por Día y Trabajador
       </h2>
 
-      <div className="grid grid-cols-4 gap-2  mb-8 mt-8">
+
+      <button 
+       onClick={() => seteditTable(false)}
+      className={`${editTable ? 'visible':'hidden'} ${viewMode=== "summary"? 'hidden':'visible'} flex items-center gap-1 bg-green-700 p-2 rounded-md text-white hover:underline text-sm font-medium mb-2 ml-auto mt-8`}>
+        Guardar
+      </button>
+
+      <button
+        onClick={() => seteditTable(true)}
+        className={`${editTable || viewMode=== "summary" ? 'hidden':'visible'} flex items-center gap-1 text-green-700 hover:underline text-sm font-medium mb-2 ml-auto mt-8`}
+      >
+        <SquarePen size={16}></SquarePen>
+        Editar día
+      </button>
+
+      <div className="grid grid-cols-4 gap-2  mb-8 mt-6">
         {availableDates.map((date) => {
           const dayName = new Date(date + "T00:00:00-05:00").toLocaleDateString(
             "es-ES",
@@ -112,7 +130,7 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
 
       <p className={`text-sm text-gray-500 mb-2`}>
         {viewMode === "daily"
-          ? "Cogida Hoy  " + selectedDayName
+          ? "Cogida  " + selectedDayName
           : "Total de la semana"}{" "}
       </p>
 
@@ -128,10 +146,21 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
           {viewMode === "daily"
             ? filtered.map((rec, index) => (
                 <tr key={index}>
-                  <td className="p-2 border border-gray-300 text-gray-700">
+                  <td
+                    ref={index === 0 ? tdRef : null}
+                    contentEditable={editTable}
+                    className={`p-2 border border-gray-300 text-gray-700  ${
+                      editTable
+                        ? "focus:outline-none focus:ring-2 focus:ring-green-300"
+                        : ""
+                    } `}
+                  >
                     {rec.worker}
                   </td>
-                  <td className="p-2 border border-gray-300 text-gray-700">
+                  <td
+                    contentEditable={editTable}
+                    className="p-2 border border-gray-300 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-300"
+                  >
                     {rec.kilos}
                   </td>
                   <td className="p-2 border border-gray-300 text-gray-700">
