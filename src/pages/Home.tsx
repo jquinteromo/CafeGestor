@@ -11,6 +11,7 @@ type workerType = {
   worker: string;
   kilos: string;
   date: string;
+  originalWorker?: string;
 };
 
 type Errors = {
@@ -123,7 +124,7 @@ export default function Home() {
           <CalendarSection />
         </section>
         <section className="  rounded-2xl shadow bg-white">
-          <HistoryTable recordWorker={recordWorker } kilosPrecio={kilosPrecio} />
+          <HistoryTable recordWorker={recordWorker } kilosPrecio={kilosPrecio} setrecordWorker={setrecordWorker}/>
         </section>
       </div>
     </main>

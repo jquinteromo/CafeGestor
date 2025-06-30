@@ -1,10 +1,11 @@
-import { SquarePen } from "lucide-react";
+import { SquarePen, Trash, Trash2 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
 type workerType = {
   worker: string;
   kilos: string;
   date: string;
+  originalWorker?: string;
 };
 
 type workerTotalType = {
@@ -22,9 +23,14 @@ type cosechTotalType = {
 type HijosProp = {
   recordWorker: workerType[];
   kilosPrecio: string;
+  setrecordWorker: (value: workerType[]) => void;
 };
 
-export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
+export const HistoryTable = ({
+  recordWorker,
+  kilosPrecio,
+  setrecordWorker,
+}: HijosProp) => {
   const availableDates = Array.from(new Set(recordWorker.map((r) => r.date)));
 
   const [selectedDate, setSelectedDate] = useState(availableDates[0]);
@@ -32,6 +38,32 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
   const [summary, setsummary] = useState<workerTotalType[]>([]);
   const [summaryCosesh, setsummaryCosesh] = useState<cosechTotalType[]>([]);
   const [editTable, seteditTable] = useState<boolean>(false);
+  const [workerUpdate, setworkerUpdate] = useState<workerType[]>([]);
+
+  const workerupdate = (index: number, prop: string, value: string) => {
+    const updatedItem = { ...workerUpdate[index] };
+    updatedItem[prop as keyof workerType] = value;
+    const updatedList = [...workerUpdate];
+    updatedList[index] = updatedItem;
+    setworkerUpdate(updatedList);
+  };
+
+  const handleGuardar = () => {
+    const updatedGlobal = [...recordWorker];
+
+    workerUpdate.forEach((updatedItem) => {
+      const indexInGlobal = updatedGlobal.findIndex(
+        (item) =>
+          item.date === selectedDate &&
+          item.worker === updatedItem.originalWorker
+      );
+
+      if (indexInGlobal !== -1) {
+        updatedGlobal[indexInGlobal] = updatedItem;
+      }
+    });
+    setrecordWorker(updatedGlobal);
+  };
 
   const handleTotalClick = () => {
     const resumen = recordWorker.reduce((acc, r) => {
@@ -68,25 +100,24 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
   };
 
   useEffect(() => {
-    console.log(selectedDate);
-  }, [selectedDate]);
+    console.log(recordWorker);
+  }, [recordWorker]);
 
   const filtered = recordWorker.filter((r) => r.date === selectedDate);
 
-const selectedDayName = selectedDate
-  ? (() => {
-      const [year, month, day] = selectedDate.split("-").map(Number);
-      const dateObj = new Date(year, month - 1, day);
-      return dateObj.toLocaleDateString("es-ES", {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      });
-    })()
-  : "";
+  const selectedDayName = selectedDate
+    ? (() => {
+        const [year, month, day] = selectedDate.split("-").map(Number);
+        const dateObj = new Date(year, month - 1, day);
+        return dateObj.toLocaleDateString("es-ES", {
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
+      })()
+    : "";
 
-  
   useEffect(() => {
     if (recordWorker.length > 0) {
       const lastDate = recordWorker[recordWorker.length - 1].date;
@@ -94,7 +125,6 @@ const selectedDayName = selectedDate
       setViewMode("daily");
     }
   }, [recordWorker]);
-
 
   const tdRef = useRef<HTMLTableCellElement>(null);
   useEffect(() => {
@@ -112,7 +142,10 @@ const selectedDayName = selectedDate
       </h2>
 
       <button
-        onClick={() => seteditTable(false)}
+        onClick={() => {
+          seteditTable(false);
+          handleGuardar();
+        }}
         className={`${editTable ? "visible" : "hidden"} ${
           viewMode === "summary" ? "hidden" : "visible"
         } flex items-center gap-1 bg-green-700 p-2 rounded-md text-white hover:underline text-sm font-medium mb-2 ml-auto mt-8`}
@@ -121,7 +154,15 @@ const selectedDayName = selectedDate
       </button>
 
       <button
-        onClick={() => seteditTable(true)}
+        onClick={() => {
+          seteditTable(true);
+          setworkerUpdate(
+            filtered.map((r) => ({
+              ...r,
+              originalWorker: r.worker,
+            }))
+          );
+        }}
         className={`${
           editTable || viewMode === "summary" ? "hidden" : "visible"
         } flex items-center gap-1 text-green-700 hover:underline text-sm font-medium mb-2 ml-auto mt-8`}
@@ -179,6 +220,10 @@ const selectedDayName = selectedDate
             <th className="p-2 border">Trabajador</th>
             <th className="p-2 border">Kg</th>
             <th className="p-2 border">Total</th>
+            <th
+            className={`${viewMode=== "summary" ? "hidden":"visible"} p-2 border flex justify-center`}>
+              <Trash width={20} className=""></Trash>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -186,6 +231,9 @@ const selectedDayName = selectedDate
             ? filtered.map((rec, index) => (
                 <tr key={index}>
                   <td
+                    onBlur={(e) =>
+                      workerupdate(index, "worker", e.currentTarget.innerText)
+                    }
                     ref={index === 0 ? tdRef : null}
                     contentEditable={editTable}
                     className={`p-2 border border-gray-300 text-gray-700  ${
@@ -197,6 +245,9 @@ const selectedDayName = selectedDate
                     {rec.worker}
                   </td>
                   <td
+                    onBlur={(e) =>
+                      workerupdate(index, "kilos", e.currentTarget.innerText)
+                    }
                     contentEditable={editTable}
                     className="p-2 border border-gray-300 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-300"
                   >
@@ -207,6 +258,11 @@ const selectedDayName = selectedDate
                     {(
                       parseInt(kilosPrecio) * parseInt(rec.kilos)
                     ).toLocaleString()}
+                  </td>
+                  <td
+                  onClick={()=>console.log(index)} 
+                  className="p-2 border border-gray-300 text-red-700 flex justify-center">
+                    <Trash2 width={20} className=""></Trash2>
                   </td>
                 </tr>
               ))
@@ -226,7 +282,11 @@ const selectedDayName = selectedDate
         </tbody>
       </table>
 
-      <p className={`${viewMode === "summary" ?'visible':'hidden'} text-sm text-gray-500 mt-10`}>
+      <p
+        className={`${
+          viewMode === "summary" ? "visible" : "hidden"
+        } text-sm text-gray-500 mt-10`}
+      >
         Total Semana
       </p>
       <table
