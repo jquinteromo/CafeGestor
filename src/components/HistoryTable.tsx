@@ -13,6 +13,12 @@ type workerTotalType = {
   totalDinero: number;
 };
 
+type cosechTotalType = {
+  worker: string;
+  totalDinero: number;
+  totalKilos: number;
+};
+
 type HijosProp = {
   recordWorker: workerType[];
   kilosPrecio: string;
@@ -24,6 +30,7 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
   const [selectedDate, setSelectedDate] = useState(availableDates[0]);
   const [viewMode, setViewMode] = useState<"daily" | "summary">("daily");
   const [summary, setsummary] = useState<workerTotalType[]>([]);
+  const [summaryCosesh, setsummaryCosesh] = useState<cosechTotalType[]>([]);
   const [editTable, seteditTable] = useState<boolean>(false);
 
   const handleTotalClick = () => {
@@ -43,8 +50,26 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
     }, {} as Record<string, { worker: string; totalKilos: number; totalDinero: number }>);
 
     setsummary(Object.values(resumen));
+
+    const suma = Object.values(resumen).reduce(
+      (acc, summary) => {
+        acc.totalKilos += summary.totalKilos;
+        acc.totalDinero += summary.totalDinero;
+        return acc;
+      },
+      {
+        worker: "",
+        totalDinero: 0,
+        totalKilos: 0,
+      }
+    );
+    setsummaryCosesh([suma]);
     setViewMode("summary");
   };
+
+  useEffect(() => {
+    console.log(summaryCosesh);
+  }, [summaryCosesh]);
 
   const filtered = recordWorker.filter((r) => r.date === selectedDate);
 
@@ -68,7 +93,7 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
   const tdRef = useRef<HTMLTableCellElement>(null);
   useEffect(() => {
     tdRef.current?.focus();
-  }, [editTable,viewMode]);
+  }, [editTable, viewMode]);
 
   return (
     <div
@@ -80,16 +105,20 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
         Historial por Día y Trabajador
       </h2>
 
-
-      <button 
-       onClick={() => seteditTable(false)}
-      className={`${editTable ? 'visible':'hidden'} ${viewMode=== "summary"? 'hidden':'visible'} flex items-center gap-1 bg-green-700 p-2 rounded-md text-white hover:underline text-sm font-medium mb-2 ml-auto mt-8`}>
+      <button
+        onClick={() => seteditTable(false)}
+        className={`${editTable ? "visible" : "hidden"} ${
+          viewMode === "summary" ? "hidden" : "visible"
+        } flex items-center gap-1 bg-green-700 p-2 rounded-md text-white hover:underline text-sm font-medium mb-2 ml-auto mt-8`}
+      >
         Guardar
       </button>
 
       <button
         onClick={() => seteditTable(true)}
-        className={`${editTable || viewMode=== "summary" ? 'hidden':'visible'} flex items-center gap-1 text-green-700 hover:underline text-sm font-medium mb-2 ml-auto mt-8`}
+        className={`${
+          editTable || viewMode === "summary" ? "hidden" : "visible"
+        } flex items-center gap-1 text-green-700 hover:underline text-sm font-medium mb-2 ml-auto mt-8`}
       >
         <SquarePen size={16}></SquarePen>
         Editar día
@@ -121,7 +150,9 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
           );
         })}
         <button
-          onClick={() => handleTotalClick()}
+          onClick={() => {
+            handleTotalClick();
+          }}
           className="px-3 py-1 rounded-full text-sm font-semibold transition text-white bg-black"
         >
           Total
@@ -131,7 +162,7 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
       <p className={`text-sm text-gray-500 mb-2`}>
         {viewMode === "daily"
           ? "Cogida  " + selectedDayName
-          : "Total de la semana"}{" "}
+          : "Total Trabajador"}{" "}
       </p>
 
       <table className="w-full text-sm border table-auto">
@@ -184,6 +215,41 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
                   </td>
                 </tr>
               ))}
+        </tbody>
+      </table>
+
+      <p className={`text-sm text-gray-500 mt-10`}>
+        {viewMode === "daily"
+          ? "Cogida  " + selectedDayName
+          : "Total Semana"}{" "}
+      </p>
+      <table
+        className={`${
+          viewMode === "summary" ? "visible" : "hidden"
+        } w-full text-sm border table-auto mt-2`}
+      >
+        <thead className=" bg-green-100 text-green-800">
+          <tr>
+            <th className="p-2 border">kg Recogidos semana</th>
+            <th className="p-2 border">$ Pagar Semana</th>
+          </tr>
+        </thead>
+        <tbody>
+          {summaryCosesh.map((rec, index) => (
+            <tr key={index}>
+              <td className="p-2 border border-gray-300 text-gray-700">
+                {rec.totalKilos}
+              </td>
+              <td>
+                {rec.totalDinero.toLocaleString("es-CO", {
+                  style: "currency",
+                  currency: "COP",
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
+                })}
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
 

@@ -121,7 +121,7 @@ export default function Home() {
           <CalendarSection />
         </section>
         <section className="  rounded-2xl shadow bg-white">
-          <HistoryTable recordWorker={recordWorker  } kilosPrecio={kilosPrecio} />
+          <HistoryTable recordWorker={recordWorker } kilosPrecio={kilosPrecio} />
         </section>
       </div>
     </main>
