@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 type workerType = {
   worker: string;
@@ -16,12 +16,14 @@ type Errors = {
   precieKg: string;
   worker: string;
   kilos: string;
+  workerExist: string;
 };
 
 const errorsInit: Errors = {
   precieKg: "",
   worker: "",
   kilos: "",
+  workerExist: "",
 };
 
 type HijosProp = {
@@ -44,10 +46,18 @@ export const HarvestForm = ({
 }: HijosProp) => {
   const [worker, setworker] = useState<workerType>(workerInit);
 
+const getLocalDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
   const alreadyExists = recordWorker.some(
     (r) =>
       r.worker.toLowerCase().trim() === worker.worker.toLowerCase().trim() &&
-      r.date === new Date().toISOString().split("T")[0]
+      r.date === getLocalDate()
   );
 
   const Recordsworkers = (name: string, value: string) => {
@@ -57,9 +67,11 @@ export const HarvestForm = ({
     });
   };
 
-  // useEffect(() => {
-  //   console.log(worker);
-  // }, [worker]);
+  
+
+  useEffect(() => {
+    console.log(recordWorker);
+  }, [recordWorker]);
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col ">
@@ -78,13 +90,11 @@ export const HarvestForm = ({
             className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300"
             onChange={(e) => Recordsworkers(e.target.name, e.target.value)}
           />
-          {alreadyExists && (
+          {errors.workerExist && (
             <span
-              className={`${
-                alreadyExists ? "visible" : "hidden"
-              }  text-red-400 text-start mt-2`}
+              className={`text-red-400 text-start mt-2`}
             >
-              Ya se registro el trabjador hoy
+             {errors.workerExist}
             </span>
           )}
           {errors.worker && (
@@ -117,7 +127,12 @@ export const HarvestForm = ({
 
       <button
         onClick={() => {
-          const newErrors = { precieKg: "", worker: "", kilos: "" };
+          const newErrors = {
+            precieKg: "",
+            worker: "",
+            kilos: "",
+            workerExist: "",
+          };
           let hasError = false;
 
           if ((kilosPrecio && !savePrecie) || !kilosPrecio) {
@@ -135,18 +150,19 @@ export const HarvestForm = ({
             hasError = true;
           }
 
+          if (alreadyExists) {
+            newErrors.workerExist = "El trabajador ya a sido registrado";
+            hasError = true
+          }
+
           if (hasError) {
             setErrors(newErrors);
             return;
           }
 
-          if (alreadyExists) {
-            return;
-          }
-
           const fullWorker = {
             ...worker,
-            date: new Date().toISOString().split("T")[0],
+            date: getLocalDate(),
           };
 
           dataWorker(fullWorker);

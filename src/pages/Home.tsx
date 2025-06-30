@@ -17,6 +17,7 @@ type Errors = {
   precieKg: string;
   worker: string;
   kilos: string;
+  workerExist : string
 };
 
 export default function Home() {
@@ -33,6 +34,7 @@ export default function Home() {
     precieKg:"",
     worker: "",
     kilos: "",
+    workerExist: ""
   });
 
 

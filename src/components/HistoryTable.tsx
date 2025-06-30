@@ -68,20 +68,25 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
   };
 
   useEffect(() => {
-    console.log(summaryCosesh);
-  }, [summaryCosesh]);
+    console.log(selectedDate);
+  }, [selectedDate]);
 
   const filtered = recordWorker.filter((r) => r.date === selectedDate);
 
-  const selectedDayName = new Date(
-    selectedDate + "T00:00:00-05:00"
-  ).toLocaleDateString("es-ES", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+const selectedDayName = selectedDate
+  ? (() => {
+      const [year, month, day] = selectedDate.split("-").map(Number);
+      const dateObj = new Date(year, month - 1, day);
+      return dateObj.toLocaleDateString("es-ES", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
+    })()
+  : "";
 
+  
   useEffect(() => {
     if (recordWorker.length > 0) {
       const lastDate = recordWorker[recordWorker.length - 1].date;
@@ -89,6 +94,7 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
       setViewMode("daily");
     }
   }, [recordWorker]);
+
 
   const tdRef = useRef<HTMLTableCellElement>(null);
   useEffect(() => {
@@ -126,12 +132,14 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
 
       <div className="grid grid-cols-4 gap-2  mb-8 mt-6">
         {availableDates.map((date) => {
-          const dayName = new Date(date + "T00:00:00-05:00").toLocaleDateString(
-            "es-ES",
-            {
-              weekday: "long",
-            }
-          );
+          const [y, m, d] = date.split("-");
+          const dayName = new Date(
+            Number(y),
+            Number(m) - 1,
+            Number(d)
+          ).toLocaleDateString("es-ES", {
+            weekday: "long",
+          });
           return (
             <button
               key={date}
@@ -218,10 +226,8 @@ export const HistoryTable = ({ recordWorker, kilosPrecio }: HijosProp) => {
         </tbody>
       </table>
 
-      <p className={`text-sm text-gray-500 mt-10`}>
-        {viewMode === "daily"
-          ? "Cogida  " + selectedDayName
-          : "Total Semana"}{" "}
+      <p className={`${viewMode === "summary" ?'visible':'hidden'} text-sm text-gray-500 mt-10`}>
+        Total Semana
       </p>
       <table
         className={`${
