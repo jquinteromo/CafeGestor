@@ -39,6 +39,7 @@ export const HistoryTable = ({
   const [summaryCosesh, setsummaryCosesh] = useState<cosechTotalType[]>([]);
   const [editTable, seteditTable] = useState<boolean>(false);
   const [workerUpdate, setworkerUpdate] = useState<workerType[]>([]);
+  const [filtered, setfiltered] = useState<workerType[]>([]);
 
   const workerupdate = (index: number, prop: string, value: string) => {
     const updatedItem = { ...workerUpdate[index] };
@@ -103,7 +104,9 @@ export const HistoryTable = ({
     console.log(recordWorker);
   }, [recordWorker]);
 
-  const filtered = recordWorker.filter((r) => r.date === selectedDate);
+  useEffect(() => {
+    setfiltered(recordWorker.filter((r) => r.date === selectedDate))
+  }, [selectedDate]);
 
   const selectedDayName = selectedDate
     ? (() => {
@@ -221,7 +224,10 @@ export const HistoryTable = ({
             <th className="p-2 border">Kg</th>
             <th className="p-2 border">Total</th>
             <th
-            className={`${viewMode=== "summary" ? "hidden":"visible"} p-2 border flex justify-center`}>
+              className={`${
+                viewMode === "summary" ? "hidden" : "visible"
+              } p-2 border flex justify-center`}
+            >
               <Trash width={20} className=""></Trash>
             </th>
           </tr>
@@ -260,8 +266,18 @@ export const HistoryTable = ({
                     ).toLocaleString()}
                   </td>
                   <td
-                  onClick={()=>console.log(index)} 
-                  className="p-2 border border-gray-300 text-red-700 flex justify-center">
+                    onClick={() => {
+                      alert("Seguro que deseas eliminar al trabjador?")
+                      setfiltered( filtered.filter(
+                        (worker) =>
+                          !(
+                            rec.worker === worker.worker &&
+                            worker.date === selectedDate
+                          )
+                      ))
+                    }}
+                    className="p-2 border border-gray-300 text-red-700 flex justify-center"
+                  >
                     <Trash2 width={20} className=""></Trash2>
                   </td>
                 </tr>
