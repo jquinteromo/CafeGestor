@@ -1,3 +1,4 @@
+import { useApp } from "../context/AppContext";
 import { SquarePen, Trash, Trash2 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
@@ -5,17 +6,15 @@ import type { workerType} from "../../Types/Types";
 import type { workerTotalType} from "../../Types/Types";
 import type { cosechTotalType } from "../../Types/Types";
 
-type HijosProp = {
-  recordWorker: workerType[];
-  kilosPrecio: string;
-  setrecordWorker: (value: workerType[]) => void;
-};
 
-export const HistoryTable = ({
-  recordWorker,
-  kilosPrecio,
-  setrecordWorker,
-}: HijosProp) => {
+export const HistoryTable = () => {
+const {
+    recordWorker,
+    setrecordWorker,
+    kilosPrecio,
+  } = useApp();
+
+
   const availableDates = Array.from(new Set(recordWorker.map((r) => r.date)));
 
   const [selectedDate, setSelectedDate] = useState(availableDates[0]);

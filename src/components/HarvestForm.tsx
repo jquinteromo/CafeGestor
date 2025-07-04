@@ -1,14 +1,15 @@
+import { useApp } from "../context/AppContext";
+
 import { useState, useEffect } from "react";
 
-import type { workerType} from "../../Types/Types";
-import type { Errors} from "../../Types/Types";
+import type { workerType } from "../../Types/Types";
+import type { Errors } from "../../Types/Types";
 
 const workerInit: workerType = {
   worker: "",
   kilos: "",
   date: "",
 };
-
 
 const errorsInit: Errors = {
   precieKg: "",
@@ -17,27 +18,23 @@ const errorsInit: Errors = {
   workerExist: "",
 };
 
-type HijosProp = {
-  dataWorker: (value: workerType) => void;
-  recordWorker: workerType[];
-  kilosPrecio: string;
-  showpricePerKilo: boolean;
-  savePrecie: boolean;
-  setErrors: (value: Errors) => void;
-  errors: Errors;
-};
+export const HarvestForm = () => {
+  const {
+    recordWorker,
+    setrecordWorker,
+    kilosPrecio,
+    savePrecie,
+    errors,
+    setErrors,
+  } = useApp();
 
-export const HarvestForm = ({
-  dataWorker,
-  recordWorker,
-  kilosPrecio,
-  savePrecie,
-  setErrors,
-  errors,
-}: HijosProp) => {
+  const dataWorker = (value: workerType) => {
+    setrecordWorker((prev) => [...prev, value]);
+  };
+
   const [worker, setworker] = useState<workerType>(workerInit);
 
-const getLocalDate = () => {
+  const getLocalDate = () => {
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, "0");
@@ -57,8 +54,6 @@ const getLocalDate = () => {
       [name]: value,
     });
   };
-
-  
 
   useEffect(() => {
     console.log(recordWorker);
@@ -82,10 +77,8 @@ const getLocalDate = () => {
             onChange={(e) => Recordsworkers(e.target.name, e.target.value)}
           />
           {errors.workerExist && (
-            <span
-              className={`text-red-400 text-start mt-2`}
-            >
-             {errors.workerExist}
+            <span className={`text-red-400 text-start mt-2`}>
+              {errors.workerExist}
             </span>
           )}
           {errors.worker && (
@@ -143,7 +136,7 @@ const getLocalDate = () => {
 
           if (alreadyExists) {
             newErrors.workerExist = "El trabajador ya a sido registrado";
-            hasError = true
+            hasError = true;
           }
 
           if (hasError) {

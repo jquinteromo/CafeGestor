@@ -1,24 +1,23 @@
+import { useApp } from "../context/AppContext";
 import { useState } from "react";
 
-type HijosProp = {
-  PricePerKilo: (value: string) => void;
-  setshowpricePerKilo: (value: boolean) => void;
-  showpricePerKilo: boolean;
-  setsavePrecie: (value: boolean) => void;
-  savePrecie: boolean;
-  errorPreciekg: string;
-};
 
-export default function PrecieKg({
-  PricePerKilo,
-  setshowpricePerKilo,
-  showpricePerKilo,
-  setsavePrecie,
-  savePrecie,
-  errorPreciekg,
-}: HijosProp) {
+export default function PrecieKg(
+ ) {
+  const {
+    setKilosPrecio,
+    showpricePerKilo,
+    setshowpricePerKilo,
+    savePrecie,
+    setsavePrecie,
+errors
+  } = useApp();
   const [pricePerKilo, setPricePerKilo] = useState<string>("");
   
+   const PricePerKilo = (value: string) => {
+    setKilosPrecio(value);
+  };
+
 
   return (
     <div className="flex flex-col mt-6 ">
@@ -82,7 +81,7 @@ export default function PrecieKg({
   
 
       {savePrecie ||
-        (errorPreciekg && (
+        ( errors.precieKg && (
           <span
             className={`${
               savePrecie && !pricePerKilo ? "hidden" : "visible"

@@ -1,12 +1,13 @@
-
 import "./App.css";
 import Home from "./pages/Home";
-
+import { AppProvider } from "./context/AppContext";
 
 
 function App() {
   return (
-<Home></Home>
+    <AppProvider>
+      <Home></Home>
+    </AppProvider>
   );
 }
 
