@@ -1,109 +1,38 @@
 import { useApp } from "../context/AppContext";
-import { SquarePen, Trash, Trash2 } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
-
-import type { workerType} from "../../Types/Types";
-import type { workerTotalType} from "../../Types/Types";
-import type { cosechTotalType } from "../../Types/Types";
-
+import { SquarePen } from "lucide-react";
+import { useEffect } from "react";
+import { useWorkerLogic } from "../hooks/useWorkerLogic";
+import TableWorker from "./componentsHistoryTable/Tables";
 
 export const HistoryTable = () => {
-const {
+  const {
     recordWorker,
-    setrecordWorker,
-    kilosPrecio,
+    setworkerUpdate,
+    summaryCosesh,
+    viewMode,
+    setViewMode,
+    filtered,
+    setfiltered,
+    editTable,
+    seteditTable,
+    selectedDate,
+    setSelectedDate,
   } = useApp();
-
 
   const availableDates = Array.from(new Set(recordWorker.map((r) => r.date)));
 
-  const [selectedDate, setSelectedDate] = useState(availableDates[0]);
-  const [viewMode, setViewMode] = useState<"daily" | "summary">("daily");
-  const [summary, setsummary] = useState<workerTotalType[]>([]);
-  const [summaryCosesh, setsummaryCosesh] = useState<cosechTotalType[]>([]);
-  const [editTable, seteditTable] = useState<boolean>(false);
-  const [workerUpdate, setworkerUpdate] = useState<workerType[]>([]);
-  const [filtered, setfiltered] = useState<workerType[]>([]);
+  const {handleGuardar, handleTotalClick ,selectedDayName} = useWorkerLogic();
 
-  const workerupdate = (index: number, prop: string, value: string) => {
-    const updatedItem = { ...workerUpdate[index] };
-    updatedItem[prop as keyof workerType] = value;
-    const updatedList = [...workerUpdate];
-    updatedList[index] = updatedItem;
-    setworkerUpdate(updatedList);
-  };
-
-  const handleGuardar = () => {
-    const updatedGlobal = [...recordWorker];
-
-    workerUpdate.forEach((updatedItem) => {
-      const indexInGlobal = updatedGlobal.findIndex(
-        (item) =>
-          item.date === selectedDate &&
-          item.worker === updatedItem.originalWorker
-      );
-
-      if (indexInGlobal !== -1) {
-        updatedGlobal[indexInGlobal] = updatedItem;
-      }
-    });
-    setrecordWorker(updatedGlobal);
-  };
-
-  const handleTotalClick = () => {
-    const resumen = recordWorker.reduce((acc, r) => {
-      const { worker, kilos } = r;
-      const kilosInt = parseInt(kilos);
-      if (!acc[worker]) {
-        acc[worker] = {
-          worker,
-          totalKilos: 0,
-          totalDinero: 0,
-        };
-      }
-      acc[worker].totalKilos += kilosInt;
-      acc[worker].totalDinero += kilosInt * parseInt(kilosPrecio);
-      return acc;
-    }, {} as Record<string, { worker: string; totalKilos: number; totalDinero: number }>);
-
-    setsummary(Object.values(resumen));
-
-    const suma = Object.values(resumen).reduce(
-      (acc, summary) => {
-        acc.totalKilos += summary.totalKilos;
-        acc.totalDinero += summary.totalDinero;
-        return acc;
-      },
-      {
-        worker: "",
-        totalDinero: 0,
-        totalKilos: 0,
-      }
-    );
-    setsummaryCosesh([suma]);
-    setViewMode("summary");
-  };
 
   useEffect(() => {
     console.log(recordWorker);
   }, [recordWorker]);
 
   useEffect(() => {
-    setfiltered(recordWorker.filter((r) => r.date === selectedDate))
-  }, [selectedDate,recordWorker]);
+    setfiltered(recordWorker.filter((r) => r.date === selectedDate));
+  }, [selectedDate, recordWorker]);
 
-  const selectedDayName = selectedDate
-    ? (() => {
-        const [year, month, day] = selectedDate.split("-").map(Number);
-        const dateObj = new Date(year, month - 1, day);
-        return dateObj.toLocaleDateString("es-ES", {
-          weekday: "long",
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        });
-      })()
-    : "";
+  
 
   useEffect(() => {
     if (recordWorker.length > 0) {
@@ -113,11 +42,8 @@ const {
     }
   }, [recordWorker]);
 
-  const tdRef = useRef<HTMLTableCellElement>(null);
-  useEffect(() => {
-    tdRef.current?.focus();
-  }, [editTable, viewMode]);
-
+ 
+  
   return (
     <div
       className={`${
@@ -201,86 +127,7 @@ const {
           : "Total Trabajador"}{" "}
       </p>
 
-      <table className="w-full text-sm border table-auto">
-        <thead className="bg-green-100 text-green-800">
-          <tr>
-            <th className="p-2 border">Trabajador</th>
-            <th className="p-2 border">Kg</th>
-            <th className="p-2 border">Total</th>
-            <th
-              className={`${
-                viewMode === "summary" ? "hidden" : "visible"
-              } p-2 border flex justify-center`}
-            >
-              <Trash width={20} className=""></Trash>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {viewMode === "daily"
-            ? filtered.map((rec, index) => (
-                <tr key={index}>
-                  <td
-                    onBlur={(e) =>
-                      workerupdate(index, "worker", e.currentTarget.innerText)
-                    }
-                    ref={index === 0 ? tdRef : null}
-                    contentEditable={editTable}
-                    className={`p-2 border border-gray-300 text-gray-700  ${
-                      editTable
-                        ? "focus:outline-none focus:ring-2 focus:ring-green-300"
-                        : ""
-                    } `}
-                  >
-                    {rec.worker}
-                  </td>
-                  <td
-                    onBlur={(e) =>
-                      workerupdate(index, "kilos", e.currentTarget.innerText)
-                    }
-                    contentEditable={editTable}
-                    className="p-2 border border-gray-300 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-300"
-                  >
-                    {rec.kilos}
-                  </td>
-                  <td className="p-2 border border-gray-300 text-gray-700">
-                    $
-                    {(
-                      parseInt(kilosPrecio) * parseInt(rec.kilos)
-                    ).toLocaleString()}
-                  </td>
-                  <td
-                    onClick={() => {
-                      alert("Seguro que deseas eliminar al trabjador?")
-                      setfiltered( filtered.filter(
-                        (worker) =>
-                          !(
-                            rec.worker === worker.worker &&
-                            worker.date === selectedDate
-                          )
-                      ))
-                    }}
-                    className="p-2 border border-gray-300 text-red-700 flex justify-center"
-                  >
-                    <Trash2 width={20} className=""></Trash2>
-                  </td>
-                </tr>
-              ))
-            : summary.map((rec, index) => (
-                <tr key={index}>
-                  <td className="p-2 border border-gray-300 text-gray-700">
-                    {rec.worker}
-                  </td>
-                  <td className="p-2 border border-gray-300 text-gray-700">
-                    {rec.totalKilos}
-                  </td>
-                  <td className="p-2 border border-gray-300 text-gray-700">
-                    ${(parseInt(kilosPrecio) * rec.totalKilos).toLocaleString()}
-                  </td>
-                </tr>
-              ))}
-        </tbody>
-      </table>
+    <TableWorker></TableWorker>
 
       <p
         className={`${

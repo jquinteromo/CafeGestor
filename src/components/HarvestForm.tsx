@@ -1,6 +1,6 @@
+import { useWorkerLogic } from "../hooks/useWorkerLogic";
 import { useApp } from "../context/AppContext";
-
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 
 import type { workerType } from "../../Types/Types";
 import type { Errors } from "../../Types/Types";
@@ -20,6 +20,8 @@ const errorsInit: Errors = {
 
 export const HarvestForm = () => {
   const {
+    worker,
+    setworker,
     recordWorker,
     setrecordWorker,
     kilosPrecio,
@@ -28,11 +30,13 @@ export const HarvestForm = () => {
     setErrors,
   } = useApp();
 
+    const { Recordsworkers} = useWorkerLogic();
+
   const dataWorker = (value: workerType) => {
     setrecordWorker((prev) => [...prev, value]);
   };
 
-  const [worker, setworker] = useState<workerType>(workerInit);
+
 
   const getLocalDate = () => {
     const today = new Date();
@@ -48,13 +52,7 @@ export const HarvestForm = () => {
       r.date === getLocalDate()
   );
 
-  const Recordsworkers = (name: string, value: string) => {
-    setworker({
-      ...worker,
-      [name]: value,
-    });
-  };
-
+  
   useEffect(() => {
     console.log(recordWorker);
   }, [recordWorker]);

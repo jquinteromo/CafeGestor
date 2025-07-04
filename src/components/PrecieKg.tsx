@@ -1,23 +1,20 @@
 import { useApp } from "../context/AppContext";
 import { useState } from "react";
 
-
-export default function PrecieKg(
- ) {
+export default function PrecieKg() {
   const {
     setKilosPrecio,
     showpricePerKilo,
     setshowpricePerKilo,
     savePrecie,
     setsavePrecie,
-errors
+    errors,
   } = useApp();
   const [pricePerKilo, setPricePerKilo] = useState<string>("");
-  
-   const PricePerKilo = (value: string) => {
+
+  const PricePerKilo = (value: string) => {
     setKilosPrecio(value);
   };
-
 
   return (
     <div className="flex flex-col mt-6 ">
@@ -78,10 +75,9 @@ errors
           />
         </div>
       )}
-  
 
       {savePrecie ||
-        ( errors.precieKg && (
+        (errors.precieKg && (
           <span
             className={`${
               savePrecie && !pricePerKilo ? "hidden" : "visible"
