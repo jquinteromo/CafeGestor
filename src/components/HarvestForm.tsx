@@ -5,6 +5,9 @@ import { useEffect } from "react";
 import type { workerType } from "../../Types/Types";
 import type { Errors } from "../../Types/Types";
 
+import { insertWorker } from "../lib/sqlite";
+import { getAllWorkers } from "../lib/sqlite";
+
 const workerInit: workerType = {
   worker: "",
   kilos: "",
@@ -28,6 +31,7 @@ export const HarvestForm = () => {
     savePrecie,
     errors,
     setErrors,
+    shouldRefetch
   } = useApp();
 
     const { Recordsworkers} = useWorkerLogic();
@@ -57,6 +61,17 @@ export const HarvestForm = () => {
     console.log(recordWorker);
   }, [recordWorker]);
 
+  
+
+  useEffect(() => {
+  const fetchData = async () => {
+    const data = await getAllWorkers(); 
+    setrecordWorker(data);              
+  };
+
+  fetchData();
+}, [shouldRefetch,setrecordWorker])
+  
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col ">
       <h2 className="text-xl  font-semibold text-green-800 mb-8">
@@ -150,6 +165,8 @@ export const HarvestForm = () => {
           dataWorker(fullWorker);
           setworker(workerInit);
           setErrors(errorsInit);
+
+          insertWorker(worker)
         }}
         className="p-2 bg-green-700 rounded-lg mt-2 text-white"
       >

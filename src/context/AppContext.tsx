@@ -39,6 +39,8 @@ type AppContextType = {
   setSelectedDate: React.Dispatch<React.SetStateAction<string>>;
   worker:workerType
   setworker:React.Dispatch<React.SetStateAction<workerType>>;
+  shouldRefetch: boolean
+  setShouldRefetch:React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const AppContext = createContext<AppContextType>({} as AppContextType);
@@ -60,6 +62,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   const [filtered, setfiltered] = useState<workerType[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
     const [worker, setworker] = useState<workerType>(workerInit);
+    const [shouldRefetch, setShouldRefetch] = useState(false);
   const [errors, setErrors] = useState<Errors>({
     precieKg: "",
     worker: "",
@@ -95,7 +98,9 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         selectedDate,
         setSelectedDate,
         worker,
-        setworker
+        setworker,
+        shouldRefetch,
+        setShouldRefetch
       }}
     >
       {children}

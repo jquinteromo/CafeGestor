@@ -3,7 +3,7 @@ export type workerType = {
   worker: string;
   kilos: string;
   date: string;
-originalWorker?: string;
+  originalWorker?: string;
 };
 
 

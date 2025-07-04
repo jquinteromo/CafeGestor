@@ -3,6 +3,7 @@ import { SquarePen } from "lucide-react";
 import { useEffect } from "react";
 import { useWorkerLogic } from "../hooks/useWorkerLogic";
 import TableWorker from "./componentsHistoryTable/Tables";
+import { updateWorker } from "../lib/sqlite";
 
 export const HistoryTable = () => {
   const {
@@ -17,6 +18,7 @@ export const HistoryTable = () => {
     seteditTable,
     selectedDate,
     setSelectedDate,
+    setShouldRefetch
   } = useApp();
 
   const availableDates = Array.from(new Set(recordWorker.map((r) => r.date)));
@@ -30,7 +32,7 @@ export const HistoryTable = () => {
 
   useEffect(() => {
     setfiltered(recordWorker.filter((r) => r.date === selectedDate));
-  }, [selectedDate, recordWorker]);
+  }, [selectedDate, recordWorker,setfiltered]);
 
   
 
@@ -40,7 +42,7 @@ export const HistoryTable = () => {
       setSelectedDate(lastDate);
       setViewMode("daily");
     }
-  }, [recordWorker]);
+  }, [recordWorker,setSelectedDate,setViewMode,]);
 
  
   
@@ -58,6 +60,8 @@ export const HistoryTable = () => {
         onClick={() => {
           seteditTable(false);
           handleGuardar();
+          updateWorker()
+          setShouldRefetch(prev => !prev); 
         }}
         className={`${editTable ? "visible" : "hidden"} ${
           viewMode === "summary" ? "hidden" : "visible"
