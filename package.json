@@ -8,9 +8,14 @@
     "dev:currently": "concurrently \"npm run dev --prefix\" \"npm run dev --prefix server\"",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+      "deployAndroid": "npm run build && npx cap copy"
+
   },
   "dependencies": {
+    "@capacitor/android": "^7.4.1",
+    "@capacitor/cli": "^7.4.1",
+    "@capacitor/core": "^7.4.1",
     "axios": "^1.10.0",
     "lucide-react": "^0.516.0",
     "react": "^19.1.0",

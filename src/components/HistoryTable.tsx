@@ -106,7 +106,7 @@ export const HistoryTable = ({
 
   useEffect(() => {
     setfiltered(recordWorker.filter((r) => r.date === selectedDate))
-  }, [selectedDate]);
+  }, [selectedDate,recordWorker]);
 
   const selectedDayName = selectedDate
     ? (() => {
