@@ -1,10 +1,7 @@
 import { useState, useEffect } from "react";
 
-type workerType = {
-  worker: string;
-  kilos: string;
-  date: string;
-};
+import type { workerType} from "../../Types/Types";
+import type { Errors} from "../../Types/Types";
 
 const workerInit: workerType = {
   worker: "",
@@ -12,12 +9,6 @@ const workerInit: workerType = {
   date: "",
 };
 
-type Errors = {
-  precieKg: string;
-  worker: string;
-  kilos: string;
-  workerExist: string;
-};
 
 const errorsInit: Errors = {
   precieKg: "",

@@ -1,24 +1,9 @@
 import { SquarePen, Trash, Trash2 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
-type workerType = {
-  worker: string;
-  kilos: string;
-  date: string;
-  originalWorker?: string;
-};
-
-type workerTotalType = {
-  worker: string;
-  totalKilos: number;
-  totalDinero: number;
-};
-
-type cosechTotalType = {
-  worker: string;
-  totalDinero: number;
-  totalKilos: number;
-};
+import type { workerType} from "../../Types/Types";
+import type { workerTotalType} from "../../Types/Types";
+import type { cosechTotalType } from "../../Types/Types";
 
 type HijosProp = {
   recordWorker: workerType[];
