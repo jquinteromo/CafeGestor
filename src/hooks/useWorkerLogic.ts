@@ -2,6 +2,7 @@
 import { useApp } from "../context/AppContext";
 import type { workerType } from "../../Types/Types";
 
+
 export const useWorkerLogic = () => {
   const {
     workerUpdate,
@@ -18,13 +19,15 @@ export const useWorkerLogic = () => {
   } = useApp();
 
   // Copia de trabajadores actualizada
-  const workerupdate = (index: number, prop: string, value: string) => {
-    const updatedItem = { ...workerUpdate[index] };
-    updatedItem[prop as keyof workerType] = value;
-    const updatedList = [...workerUpdate];
-    updatedList[index] = updatedItem;
-    setworkerUpdate(updatedList);
-  };
+ const workerupdate = async (index: number, prop: string, value: string) => {
+  const updatedItem = { ...workerUpdate[index] };
+  updatedItem[prop as keyof workerType] = value;
+
+  const updatedList = [...workerUpdate];
+  updatedList[index] = updatedItem;
+  setworkerUpdate(updatedList);
+
+};
 
   // Actualiza y guarda trabajadores en estado global
   const handleGuardar = () => {

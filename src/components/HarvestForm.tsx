@@ -5,13 +5,14 @@ import { useEffect } from "react";
 import type { workerType } from "../../Types/Types";
 import type { Errors } from "../../Types/Types";
 
-import { insertWorker } from "../lib/sqlite";
+import { getPrecieKg, insertWorker } from "../lib/sqlite";
 import { getAllWorkers } from "../lib/sqlite";
 
 const workerInit: workerType = {
   worker: "",
   kilos: "",
   date: "",
+  originalWorker: "",
 };
 
 const errorsInit: Errors = {
@@ -31,16 +32,15 @@ export const HarvestForm = () => {
     savePrecie,
     errors,
     setErrors,
-    shouldRefetch
+    shouldRefetch,
+    setPricePerKilo,
   } = useApp();
 
-    const { Recordsworkers} = useWorkerLogic();
+  const { Recordsworkers } = useWorkerLogic();
 
   const dataWorker = (value: workerType) => {
     setrecordWorker((prev) => [...prev, value]);
   };
-
-
 
   const getLocalDate = () => {
     const today = new Date();
@@ -56,22 +56,22 @@ export const HarvestForm = () => {
       r.date === getLocalDate()
   );
 
-  
   useEffect(() => {
     console.log(recordWorker);
   }, [recordWorker]);
 
-  
-
   useEffect(() => {
-  const fetchData = async () => {
-    const data = await getAllWorkers(); 
-    setrecordWorker(data);              
-  };
+    const fetchData = async () => {
+      const dataWorker = await getAllWorkers();
+      setrecordWorker(dataWorker);
 
-  fetchData();
-}, [shouldRefetch,setrecordWorker])
-  
+      const dataKg = await getPrecieKg();
+      setPricePerKilo(dataKg);
+    };
+
+    fetchData();
+  }, [shouldRefetch, setrecordWorker, setPricePerKilo]);
+
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col ">
       <h2 className="text-xl  font-semibold text-green-800 mb-8">
@@ -166,7 +166,7 @@ export const HarvestForm = () => {
           setworker(workerInit);
           setErrors(errorsInit);
 
-          insertWorker(worker)
+          insertWorker(worker);
         }}
         className="p-2 bg-green-700 rounded-lg mt-2 text-white"
       >

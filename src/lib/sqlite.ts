@@ -25,11 +25,39 @@ export const getDatabase = async () => {
         kilos INTEGER NOT NULL
       );
     `);
+
+    await db.execute(`
+      CREATE TABLE IF NOT EXISTS preciokg (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+       preciokg  REAL NOT NULL
+      );
+    `);
   }
   return db;
 };
 
-// 👉 INSERTAR UN TRABAJADOR
+//INSERTAR PRECIO GLOBAL DE KG
+export const insertKg = async (precio: string) => {
+  const db = await getDatabase();
+  await db.run(`INSERT INTO preciokg (preciokg) VALUES (?)`, [
+    parseFloat(precio),
+  ]);
+};
+
+
+//LEER PRECIO DE KG
+export const getPrecieKg = async () => {
+  const db = await getDatabase();
+  const result = await db.query(
+  `SELECT preciokg FROM preciokg ORDER BY id DESC LIMIT 1`
+);
+ 
+  return result.values?.[0]?.preciokg ?? null;
+};
+
+
+
+//  INSERTAR UN TRABAJADOR
 export const insertWorker = async (worker: workerType) => {
   const db = await getDatabase();
   await db.run(`INSERT INTO workers (name, date, kilos) VALUES (?, ?, ?)`, [
@@ -39,7 +67,7 @@ export const insertWorker = async (worker: workerType) => {
   ]);
 };
 
-// 👉 LEER TODOS LOS TRABAJADORES
+//  LEER TODOS LOS TRABAJADORES
 export const getAllWorkers = async (): Promise<workerType[]> => {
   const db = await getDatabase();
   const result = await db.query(
@@ -49,11 +77,16 @@ export const getAllWorkers = async (): Promise<workerType[]> => {
 };
 
 // ACTUAZLIZAR TRABAJADOR
-export const updateWorker = async () => {
+export const updateWorker = async (
+  field: string,
+  value: string | number,
+  name: string,
+  date: string
+) => {
   const db = await getDatabase();
-  await db.run(`UPDATE workers SET kilos = ? WHERE name = ? AND date = ?`, [
-    80,
-    "Juan",
-    "2025-07-04",
-  ]);
+  const query = `UPDATE workers SET ${field} = ? WHERE name = ? AND date = ?`;
+
+  //   await db.run(query, [value, name, date]);
+  const result = await db.run(query, [value, name, date]);
+  console.log("Filas actualizadas:", result.changes);
 };

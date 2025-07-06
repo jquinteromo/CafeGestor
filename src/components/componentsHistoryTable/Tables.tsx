@@ -1,7 +1,7 @@
-import {  Trash, Trash2 } from "lucide-react";
+import { Trash, Trash2 } from "lucide-react";
 import { useApp } from "../../context/AppContext";
-import { useWorkerLogic } from "../../hooks/useWorkerLogic";
-import {  useRef,useEffect } from "react";
+import { useRef, useEffect } from "react";
+import { updateWorker } from "../../lib/sqlite";
 
 export default function TableWorker() {
   const {
@@ -14,11 +14,10 @@ export default function TableWorker() {
     kilosPrecio,
   } = useApp();
 
-   const { workerupdate } = useWorkerLogic();
+  const tdRef = useRef<HTMLTableCellElement>(null);
+  const tdRefs = useRef<(HTMLTableCellElement | null)[]>([]);
 
-    const tdRef = useRef<HTMLTableCellElement>(null);
-
-    useEffect(() => {
+  useEffect(() => {
     tdRef.current?.focus();
     tdRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
   }, [editTable, viewMode]);
@@ -45,10 +44,20 @@ export default function TableWorker() {
             ? filtered.map((rec, index) => (
                 <tr key={index}>
                   <td
-                    onBlur={(e) => {
-                      workerupdate(index, "worker", e.currentTarget.innerText);
+                    ref={(el) => {
+                      tdRefs.current[index * 2] = el;
+                      if (index === 0 && tdRef) {
+                        tdRef.current = el;
+                      }
                     }}
-                    ref={index === 0 ? tdRef : null}
+                    onBlur={(e) => {
+                      updateWorker(
+                        "worker",
+                        e.currentTarget.innerText,
+                        rec.originalWorker,
+                        rec.date
+                      );
+                    }}
                     contentEditable={editTable}
                     className={`p-2 border border-gray-300 text-gray-700  ${
                       editTable
@@ -59,8 +68,16 @@ export default function TableWorker() {
                     {rec.worker}
                   </td>
                   <td
+                    ref={(el) => {
+                      tdRefs.current[index * 2 + 1] = el;
+                    }}
                     onBlur={(e) =>
-                      workerupdate(index, "kilos", e.currentTarget.innerText)
+                      updateWorker(
+                        "kilos",
+                        e.currentTarget.innerText,
+                        rec.originalWorker,
+                        rec.date
+                      )
                     }
                     contentEditable={editTable}
                     className="p-2 border border-gray-300 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-300"

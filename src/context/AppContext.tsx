@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useRef } from "react";
 import type { ReactNode } from "react";
 
 import type { workerType } from "../../Types/Types";
@@ -10,6 +10,7 @@ const workerInit: workerType = {
   worker: "",
   kilos: "",
   date: "",
+  originalWorker: "",
 };
 
 type AppContextType = {
@@ -37,10 +38,13 @@ type AppContextType = {
   setfiltered: React.Dispatch<React.SetStateAction<workerType[]>>;
   selectedDate: string;
   setSelectedDate: React.Dispatch<React.SetStateAction<string>>;
-  worker:workerType
-  setworker:React.Dispatch<React.SetStateAction<workerType>>;
-  shouldRefetch: boolean
-  setShouldRefetch:React.Dispatch<React.SetStateAction<boolean>>;
+  worker: workerType;
+  setworker: React.Dispatch<React.SetStateAction<workerType>>;
+  shouldRefetch: boolean;
+  setShouldRefetch: React.Dispatch<React.SetStateAction<boolean>>;
+  tdRefs: React.RefObject<(HTMLTableCellElement | null)[]>;
+  pricePerKilo: string;
+  setPricePerKilo: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const AppContext = createContext<AppContextType>({} as AppContextType);
@@ -61,8 +65,10 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   const [workerUpdate, setworkerUpdate] = useState<workerType[]>([]);
   const [filtered, setfiltered] = useState<workerType[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
-    const [worker, setworker] = useState<workerType>(workerInit);
-    const [shouldRefetch, setShouldRefetch] = useState(false);
+  const [pricePerKilo, setPricePerKilo] = useState<string>("");
+  const [worker, setworker] = useState<workerType>(workerInit);
+  const [shouldRefetch, setShouldRefetch] = useState(false);
+  const tdRefs = useRef<(HTMLTableCellElement | null)[]>([]);
   const [errors, setErrors] = useState<Errors>({
     precieKg: "",
     worker: "",
@@ -100,7 +106,10 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         worker,
         setworker,
         shouldRefetch,
-        setShouldRefetch
+        setShouldRefetch,
+        tdRefs,
+        pricePerKilo,
+        setPricePerKilo,
       }}
     >
       {children}

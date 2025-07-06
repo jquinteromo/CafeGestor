@@ -1,5 +1,6 @@
 import { useApp } from "../context/AppContext";
-import { useState } from "react";
+import { useEffect } from "react";
+import { insertKg } from "../lib/sqlite";
 
 export default function PrecieKg() {
   const {
@@ -9,13 +10,19 @@ export default function PrecieKg() {
     savePrecie,
     setsavePrecie,
     errors,
+    pricePerKilo,
+    setPricePerKilo
   } = useApp();
-  const [pricePerKilo, setPricePerKilo] = useState<string>("");
+  
+  useEffect(() => {
+  if (pricePerKilo) {
+    setKilosPrecio(pricePerKilo); 
+  }
+}, [pricePerKilo,setKilosPrecio]);
 
-  const PricePerKilo = (value: string) => {
-    setKilosPrecio(value);
-  };
-
+  useEffect(() => {
+    console.log(pricePerKilo);
+  }, [pricePerKilo]);  
   return (
     <div className="flex flex-col mt-6 ">
       <label
@@ -59,6 +66,7 @@ export default function PrecieKg() {
             onChange={(e) => {
               setPricePerKilo(e.target.value);
               PricePerKilo(e.target.value);
+              insertKg(e.target.value)
             }}
           />
           <input

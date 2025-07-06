@@ -16,7 +16,10 @@
     "@capacitor/android": "^7.4.1",
     "@capacitor/cli": "^7.4.1",
     "@capacitor/core": "^7.4.1",
+    "@ionic/pwa-elements": "^3.3.0",
     "axios": "^1.10.0",
+    "jeep-sqlite": "^2.8.0",
+    "localforage": "^1.10.0",
     "lucide-react": "^0.516.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"

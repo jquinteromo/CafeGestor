@@ -3,7 +3,7 @@ import { SquarePen } from "lucide-react";
 import { useEffect } from "react";
 import { useWorkerLogic } from "../hooks/useWorkerLogic";
 import TableWorker from "./componentsHistoryTable/Tables";
-import { updateWorker } from "../lib/sqlite";
+import {} from "../lib/sqlite";
 
 export const HistoryTable = () => {
   const {
@@ -18,13 +18,13 @@ export const HistoryTable = () => {
     seteditTable,
     selectedDate,
     setSelectedDate,
-    setShouldRefetch
+    setShouldRefetch,
+    tdRefs
   } = useApp();
 
   const availableDates = Array.from(new Set(recordWorker.map((r) => r.date)));
 
-  const {handleGuardar, handleTotalClick ,selectedDayName} = useWorkerLogic();
-
+  const { handleGuardar, handleTotalClick, selectedDayName } = useWorkerLogic();
 
   useEffect(() => {
     console.log(recordWorker);
@@ -32,9 +32,7 @@ export const HistoryTable = () => {
 
   useEffect(() => {
     setfiltered(recordWorker.filter((r) => r.date === selectedDate));
-  }, [selectedDate, recordWorker,setfiltered]);
-
-  
+  }, [selectedDate, recordWorker, setfiltered]);
 
   useEffect(() => {
     if (recordWorker.length > 0) {
@@ -42,10 +40,8 @@ export const HistoryTable = () => {
       setSelectedDate(lastDate);
       setViewMode("daily");
     }
-  }, [recordWorker,setSelectedDate,setViewMode,]);
+  }, [recordWorker, setSelectedDate, setViewMode]);
 
- 
-  
   return (
     <div
       className={`${
@@ -58,10 +54,12 @@ export const HistoryTable = () => {
 
       <button
         onClick={() => {
+          tdRefs.current.forEach((cell) => {
+            cell?.blur();
+          });
           seteditTable(false);
           handleGuardar();
-          updateWorker()
-          setShouldRefetch(prev => !prev); 
+          setShouldRefetch((prev) => !prev);
         }}
         className={`${editTable ? "visible" : "hidden"} ${
           viewMode === "summary" ? "hidden" : "visible"
@@ -131,7 +129,7 @@ export const HistoryTable = () => {
           : "Total Trabajador"}{" "}
       </p>
 
-    <TableWorker></TableWorker>
+      <TableWorker></TableWorker>
 
       <p
         className={`${
