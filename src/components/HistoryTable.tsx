@@ -22,7 +22,9 @@ export const HistoryTable = () => {
     tdRefs
   } = useApp();
 
-  const availableDates = Array.from(new Set(recordWorker.map((r) => r.date)));
+  const availableDates = Array.from( new Set(
+    recordWorker.map((r) => r.date.trim().substring(0, 10)) 
+  ))
 
   const { handleGuardar, handleTotalClick, selectedDayName } = useWorkerLogic();
 

@@ -35,6 +35,7 @@ export const HarvestForm = () => {
     setErrors,
     shouldRefetch,
     setPricePerKilo,
+    setshowpricePerKilo
   } = useApp();
 
   const { Recordsworkers } = useWorkerLogic();
@@ -67,12 +68,21 @@ export const HarvestForm = () => {
       setrecordWorker(dataWorker);
 
       const dataKg = await getPrecieKg();
+      
+    if (dataKg && !isNaN(Number(dataKg))) {
       setPricePerKilo(dataKg);
-           setsavePrecie(true);
+      setsavePrecie(true); 
+      setshowpricePerKilo(false);
+    } else {
+      
+      setPricePerKilo(""); 
+      setsavePrecie(false);
+      setshowpricePerKilo(true); 
+    }
     };
 
     fetchData();
-  }, [shouldRefetch, setrecordWorker, setPricePerKilo,setsavePrecie]);
+  }, [shouldRefetch, setrecordWorker, setPricePerKilo,setsavePrecie,setshowpricePerKilo]);
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col ">
