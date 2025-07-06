@@ -65,7 +65,6 @@ export default function PrecieKg() {
             }
             onChange={(e) => {
               setPricePerKilo(e.target.value);
-              PricePerKilo(e.target.value);
               insertKg(e.target.value)
             }}
           />
@@ -83,6 +82,7 @@ export default function PrecieKg() {
           />
         </div>
       )}
+
 
       {savePrecie ||
         (errors.precieKg && (

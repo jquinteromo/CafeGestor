@@ -30,6 +30,7 @@ export const HarvestForm = () => {
     setrecordWorker,
     kilosPrecio,
     savePrecie,
+    setsavePrecie,
     errors,
     setErrors,
     shouldRefetch,
@@ -67,10 +68,11 @@ export const HarvestForm = () => {
 
       const dataKg = await getPrecieKg();
       setPricePerKilo(dataKg);
+           setsavePrecie(true);
     };
 
     fetchData();
-  }, [shouldRefetch, setrecordWorker, setPricePerKilo]);
+  }, [shouldRefetch, setrecordWorker, setPricePerKilo,setsavePrecie]);
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col ">
