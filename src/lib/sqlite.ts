@@ -73,7 +73,10 @@ export const getAllWorkers = async (): Promise<workerType[]> => {
   const result = await db.query(
     `SELECT name as worker, date, kilos FROM workers`
   );
-  return result.values ?? [];
+  return (result.values ?? []).map((worker) => ({
+  ...worker,
+  date: worker.date.trim(),
+}));
 };
 
 // ACTUAZLIZAR TRABAJADOR
