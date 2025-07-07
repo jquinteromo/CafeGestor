@@ -54,8 +54,8 @@ export default function Home() {
 
   return (
     <main className=" bg-green-50 p-4  ">
-      <h1 className="text-4xl font-bold mb-10 text-green-800 flex justify-center items-center">
-        CaféGestor <HandCoins size={34} className="ml-4"></HandCoins>
+      <h1 className="text-5xl font-bold mb-10 mt-6 text-green-800 flex justify-center items-center">
+        CaféGestor <HandCoins size={38} className="ml-4"></HandCoins>
       </h1>
 
       <PriceDisplay />

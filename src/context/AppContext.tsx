@@ -45,6 +45,8 @@ type AppContextType = {
   tdRefs: React.RefObject<(HTMLTableCellElement | null)[]>;
   pricePerKilo: string;
   setPricePerKilo: React.Dispatch<React.SetStateAction<string>>;
+  coffeePrice:string
+  setcoffeePrice:React.Dispatch<React.SetStateAction<string>>;
 };
 
 const AppContext = createContext<AppContextType>({} as AppContextType);
@@ -68,6 +70,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   const [pricePerKilo, setPricePerKilo] = useState<string>("");
   const [worker, setworker] = useState<workerType>(workerInit);
   const [shouldRefetch, setShouldRefetch] = useState(false);
+   const [coffeePrice , setcoffeePrice ] = useState<string>("");
   const tdRefs = useRef<(HTMLTableCellElement | null)[]>([]);
   const [errors, setErrors] = useState<Errors>({
     precieKg: "",
@@ -110,6 +113,8 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         tdRefs,
         pricePerKilo,
         setPricePerKilo,
+        coffeePrice,
+        setcoffeePrice    
       }}
     >
       {children}
